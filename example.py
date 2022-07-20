@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(0, '.')
-
 from eip712 import eip712_encode, eip712_signature
 
 # An example of a valid Ethereum private key.
