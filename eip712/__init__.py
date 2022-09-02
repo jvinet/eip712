@@ -82,7 +82,7 @@ def encode_type(primary_type, types):
     for typ in deps:
         children = types[typ]
         if not children:
-            raise EXception(f"No type definition specified: {type}")
+            raise Exception(f"No type definition specified: {type}")
 
         defs = [f"{t['type']} {t['name']}" for t in types[typ]]
         result += typ + '(' + ','.join(defs) + ')'
