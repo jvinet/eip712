@@ -26,8 +26,6 @@ import re
 from coincurve import PrivateKey
 import eth_abi
 from eth_utils import keccak, big_endian_to_int
-from eth_account import Account
-
 
 def encode_data(primary_type, data, types):
     """
