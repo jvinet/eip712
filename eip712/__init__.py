@@ -24,8 +24,9 @@ SOFTWARE.
 import re
 
 from coincurve import PrivateKey
-from eth_abi import encode_abi
+import eth_abi
 from eth_utils import keccak, big_endian_to_int
+from eth_account import Account
 
 
 def encode_data(primary_type, data, types):
@@ -60,7 +61,7 @@ def encode_data(primary_type, data, types):
         if typ.endswith(']'):
             parsed_type = typ[:-2]
             type_value_pairs = dict([_encode_field(name, parsed_type, v) for v in value])
-            h = keccak(encode_abi(list(type_value_pairs.keys()),
+            h = keccak(eth_abi.encode(list(type_value_pairs.keys()),
                                   list(type_value_pairs.values())))
             return ['bytes32', h]
 
@@ -69,9 +70,11 @@ def encode_data(primary_type, data, types):
     for field in types[primary_type]:
         typ, val = _encode_field(field['name'], field['type'], data[field['name']])
         encoded_types.append(typ)
+        if re.search(r'^u?int(\d+)$', typ) and isinstance(val, str):
+            val = int(val)
         encoded_values.append(val)
 
-    return encode_abi(encoded_types, encoded_values)
+    return eth_abi.encode(encoded_types, encoded_values)
 
 
 def encode_type(primary_type, types):
@@ -144,7 +147,7 @@ def eip712_signature(payload, private_key):
     if isinstance(private_key, str) and private_key.startswith('0x'):
         private_key = private_key[2:]
     elif isinstance(private_key, bytes):
-        private_key = bytes.hex()
+        private_key = private_key.hex()
 
     pk = PrivateKey.from_hex(private_key)
     signature = pk.sign_recoverable(payload, hasher=keccak)
