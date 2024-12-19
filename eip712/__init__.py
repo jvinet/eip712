@@ -68,7 +68,7 @@ def encode_data(primary_type, data, types):
     for field in types[primary_type]:
         typ, val = _encode_field(field['name'], field['type'], data[field['name']])
         encoded_types.append(typ)
-        if re.search(r'^u?int(\d+)$', typ) and isinstance(val, str):
+        if re.search(r'^u?int\d+$', typ) and isinstance(val, str):
             val = int(val)
         encoded_values.append(val)
 
